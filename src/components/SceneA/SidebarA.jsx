@@ -75,7 +75,7 @@ export default function Sidebar({
         <p style={{marginTop: 0, marginBottom: 0}}>
           Laisvasis strypo galas yra kaitinamas.</p>
         <p style={{marginTop: 0, marginBottom: 0}}>
-          Degiklio šildomas strypas įkaista ir vaiškas laikantis vinutes ištirpsta.
+          Degiklio šildomas strypas įkaista ir vaškas laikantis vinutes ištirpsta.
         </p>
         <p>Keiskite įtvirtintų strypų metalų tipą ir stebėkite jų šilumos laidumo skirtumą.</p>
       </Modal>
