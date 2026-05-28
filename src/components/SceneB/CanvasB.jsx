@@ -51,10 +51,11 @@ function CanvasContent({ slider }) {
 
     const newPhase = Math.min(5, Math.floor(pct / 20) + 1);
 
+
     if (newPhase === state.current.phase) return;
     state.current.phase = newPhase;
 
-    //hides all particles ...lazy
+    //after thinking again, this is not that lazy
     scene.traverse((o) => {
       if (o.name.startsWith("Particles")) o.visible = false;
     });
@@ -67,10 +68,12 @@ function CanvasContent({ slider }) {
 
     //ice melting sequnce when when bottom is heated
     if (newPhase === 5 && !state.current.iceTriggered) {
-      state.current.iceTriggered = true;
 
       setTimeout(() => {
         const ice = actions["Ice"];
+
+        //bail if ice is not being heated
+        if (state.current.phase !== 5) return;
 
         if (ice) {
           ice.reset();
@@ -78,9 +81,14 @@ function CanvasContent({ slider }) {
           ice.clampWhenFinished = true;
           ice.play();
 
+          state.current.iceTriggered = true;
+
           setTimeout(() => {
             const p5 = actions["Particles5"];
             const obj5 = scene.getObjectByName("Particles5");
+
+            //bail harder
+            if (state.current.phase !== 5) return;
 
             if (obj5 && p5) {
               obj5.visible = true;
