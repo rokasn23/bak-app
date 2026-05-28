@@ -113,7 +113,7 @@ function CanvasContent({ slider }) {
     <group ref={group}>
       <primitive
         object={scene}
-        position={[0, -2, 0]}
+        position={[0, -2.5, 0]}
       />
     </group>
   );
@@ -126,7 +126,10 @@ export default function Scene({ slider }) {
       <directionalLight position={[1, 1, 0]} intensity={2} />
       <CanvasContent slider={slider} />
 
-      <OrbitControls />
+      <OrbitControls 
+        minDistance={5} 
+        maxDistance={11}
+      />
     </Canvas>
   );
 }

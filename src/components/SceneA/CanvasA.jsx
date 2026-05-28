@@ -76,7 +76,10 @@ export default function CanvasContent({
         onReady={handleReady}
       />
 
-      <OrbitControls />
+      <OrbitControls 
+        minDistance={5} 
+        maxDistance={13}
+      />
     </Canvas>
   );
 }

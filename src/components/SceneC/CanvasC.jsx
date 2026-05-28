@@ -115,7 +115,10 @@ function CanvasContent({
       <directionalLight position={[0, 0, 1]} intensity={1} />
       <directionalLight position={[1, 1, 0]} intensity={1} />
 
-      <OrbitControls />
+      <OrbitControls 
+        minDistance={5} 
+        maxDistance={12}
+      />
     </>
   );
 }
