@@ -2,7 +2,6 @@ import * as THREE from "three";
 import {
   forwardRef,
   useEffect,
-  useImperativeHandle,
   useMemo,
   useRef,
 } from "react";
@@ -24,12 +23,10 @@ const Model = forwardRef(function Model(
     selectedMaterial,
     position = [0, 0, 0],
     onAnimationFinished,
-    onReady,
+    baseColor,
+    playTrigger,
   },
-  ref
 ) {
-  const group = useRef();
-
   const { scene, animations } = useGLTF(url);
 
   const clonedScene = useMemo(
@@ -42,15 +39,28 @@ const Model = forwardRef(function Model(
     [clonedScene]
   );
 
-  const currentActionRef = useRef(null);
-  const playingRef = useRef(false);
+  //changes model's "base" objects colour to make a better distinction which is which
+    const baseObjRef = useRef(null);
+    
+    useEffect(() => {
+      const modelBase = clonedScene.getObjectByName("Base");
+  
+      if (modelBase) {
+        baseObjRef.current = modelBase;
+  
+        modelBase.material = modelBase.material.clone();
+      }
+    }, [clonedScene]);
+  
+    useEffect(() => {
+  
+      baseObjRef.current.material.color = new THREE.Color(baseColor);
+  
+      baseObjRef.current.material.needsUpdate = true;
+    }, [baseColor, clonedScene]);
+    //
 
-  const selectedMaterialRef = useRef(selectedMaterial);
-
-useEffect(() => {
-  selectedMaterialRef.current = selectedMaterial;
-}, [selectedMaterial]);
-
+  //hides, shows materials
   useEffect(() => {
     clonedScene.traverse((child) => {
       if (MATERIAL_NAMES.includes(child.name)) {
@@ -59,19 +69,29 @@ useEffect(() => {
 
       if (child.name === selectedMaterial) {
         child.visible = true;
-
-        child.traverse?.((subChild) => {
-          subChild.visible = true;
-        });
       }
     });
-    onReady?.();
-  }, [selectedMaterial, clonedScene, onReady]);
+  }, [selectedMaterial, clonedScene]);
 
   useEffect(() => {
+    const clip = animations.find(
+      (a) => a.name === selectedMaterial
+    );
+
+    if (!clip) return;
+
+    mixer.stopAllAction();
+
+    const action = mixer.clipAction(clip);
+
+    action.reset();
+    action.setLoop(THREE.LoopOnce, 1);
+    action.clampWhenFinished = true;
+    action.play();
+
+    
     const handleFinished = (e) => {
-      if (e.action === currentActionRef.current) {
-        playingRef.current = false;
+      if (e.action === action) {
         onAnimationFinished?.();
       }
     };
@@ -79,44 +99,10 @@ useEffect(() => {
     mixer.addEventListener("finished", handleFinished);
 
     return () => {
-      mixer.removeEventListener(
-        "finished",
-        handleFinished
-      );
+      mixer.removeEventListener("finished", handleFinished);
     };
-  }, [mixer, onAnimationFinished]);
 
-  useImperativeHandle(ref, () => ({
-    play() {
-      const clip = animations.find(
-        (a) => a.name === selectedMaterial
-      );
-
-      if (!clip) return;
-
-      mixer.stopAllAction();
-
-      const action = mixer.clipAction(clip);
-
-      action.reset();
-      action.setLoop(THREE.LoopOnce, 1);
-      action.clampWhenFinished = true;
-      action.play();
-
-      currentActionRef.current = action;
-      playingRef.current = true;
-    },
-
-    reset() {
-      mixer.stopAllAction();
-      currentActionRef.current = null;
-      playingRef.current = false;
-    },
-
-    isPlaying() {
-      return playingRef.current;
-    },
-  }));
+  }, [playTrigger, selectedMaterial, animations, mixer, onAnimationFinished]);
 
   useFrame((_, delta) => {
     mixer.update(delta);
@@ -124,7 +110,6 @@ useEffect(() => {
 
   return (
     <primitive
-      ref={group}
       object={clonedScene}
       position={position}
     />

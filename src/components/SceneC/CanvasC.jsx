@@ -91,7 +91,7 @@ function CanvasContent({
       return next;
     });
   });
-  //at this point ive had read docs enough to figure out "...props"
+  
   return (
     <>
       <primitive object={scene} position={[0, -2, 0]} />

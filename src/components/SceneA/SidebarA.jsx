@@ -28,7 +28,7 @@ export default function Sidebar({
       </button>
 
       <div>
-        <label>Kairysis modelis</label>
+        <label style={{color:"#0084ff"}}>Kairysis modelis</label>
 
         <select className="dropdown-select"
           value={leftSelection}
@@ -43,7 +43,7 @@ export default function Sidebar({
       </div>
 
       <div>
-        <label>Dešinysis modelis</label>
+        <label style={{color:"#ff3300"}}>Dešinysis modelis</label>
 
         <select className="dropdown-select"
           value={rightSelection}
