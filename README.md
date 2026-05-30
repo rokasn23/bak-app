@@ -1,3 +1,5 @@
 # Bakalauro darbas Rokas Naujokaitis
 
-Known bug: Pirmąjame modelyje keičiant metalą, jis nepasikeičia iš karto (laukia kol pasibaigs paslėpta animacija)
+A React app deployed with Vite
+
+https://rokasn23.github.io/bak-app
